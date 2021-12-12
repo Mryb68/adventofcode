@@ -38,7 +38,7 @@ struct Node<'a> {
     value: &'a str,
     next: Vec<Node<'a>>,
     visited: HashSet<&'a str>,
-    has_visited_twice: bool
+    has_visited_twice: bool,
 }
 
 impl<'a> Node<'a> {
@@ -47,7 +47,7 @@ impl<'a> Node<'a> {
             value: "start",
             next: Vec::new(),
             visited: HashSet::new(),
-            has_visited_twice: false
+            has_visited_twice: false,
         }
     }
 
@@ -56,11 +56,15 @@ impl<'a> Node<'a> {
             value,
             next: Vec::new(),
             visited,
-            has_visited_twice
+            has_visited_twice,
         }
     }
 
-    pub fn visit_paths(&mut self, links: &'a HashMap<String, Vec<&str>>, allow_visit_twice: bool) -> usize {
+    pub fn visit_paths(
+        &mut self,
+        links: &'a HashMap<String, Vec<&str>>,
+        allow_visit_twice: bool,
+    ) -> usize {
         if self.value == "end" {
             1
         } else {
@@ -70,16 +74,21 @@ impl<'a> Node<'a> {
                 if name.to_uppercase() != *name {
                     if self.visited.get(name).is_none() {
                         new_set.insert(name);
-                        self.next.push(Node::with_value(name, new_set, self.has_visited_twice));
+                        self.next
+                            .push(Node::with_value(name, new_set, self.has_visited_twice));
                     } else if !self.has_visited_twice && allow_visit_twice {
                         new_set.insert(name);
                         self.next.push(Node::with_value(name, new_set, true));
                     }
                 } else {
-                    self.next.push(Node::with_value(name, new_set, self.has_visited_twice));
+                    self.next
+                        .push(Node::with_value(name, new_set, self.has_visited_twice));
                 }
             }
-            self.next.iter_mut().map(|node| node.visit_paths(links, allow_visit_twice)).sum()
+            self.next
+                .iter_mut()
+                .map(|node| node.visit_paths(links, allow_visit_twice))
+                .sum()
         }
     }
 }
